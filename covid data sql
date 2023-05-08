@@ -1,0 +1,109 @@
+create table Covid_cases_in_India
+(
+S_No Int8 not null,	
+Name_of_State varchar(50) not null,	
+Total_Confirmed_cases int8,
+Active	int8,
+Cured int8,
+Deaths int8
+)
+
+select * from Covid_cases_in_India
+
+COPY Covid_cases_in_India FROM 'C:\ARM\Covid cases in India.csv' DELIMITER ',' CSV HEADER
+
+---Q1 total active case in india 
+
+SELECT sum(total_confirmed_cases) as total_case_in_india 
+from Covid_cases_in_India
+
+---Q2 Top 5 state which have total confirmed case
+
+select name_of_state, total_confirmed_cases
+from Covid_cases_in_India
+order by total_confirmed_cases desc
+limit 5
+
+---Q3 Which are the top 5 state which are have the highest active cases
+
+select name_of_state, max(active) as highest_active_case
+from Covid_cases_in_India
+group by name_of_state
+order by highest_active_case desc
+limit 5
+
+---Q4  total number of confirmed cases, active cases, cured cases, and deaths 
+---for the state of Maharashtra.
+
+
+select total_confirmed_cases, active, cured, deaths
+from Covid_cases_in_India
+where name_of_state = 'Maharashtra'
+
+select * from Covid_cases_in_India
+
+---Q5 The states with an active case count greater than 10,000
+
+select name_of_state, active 
+from Covid_cases_in_India
+where active > 10000
+
+---Q6 Calculate the percentage of active cases, cured cases, and deaths 
+---out of the total confirmed cases for each state.
+
+
+select name_of_state,
+Round(active / total_confirmed_cases * 100,3) as active_percentage,
+Round(cured / total_confirmed_cases * 100,3 ) as cured_percentage,
+Round(deaths / total_confirmed_cases * 100,3 ) as death_percentage
+from Covid_cases_in_India
+
+
+---Q7.the total number of confirmed cases, active cases, cured cases, and 
+---deaths for all states combined.
+
+select 
+Sum(total_confirmed_cases) as Total_confirmed_case_in_india,
+Sum(active) as Total_active_case_in_india,
+Sum(cured) as Total_cured_case_in_india,
+Sum(deaths) as Total_Deaths_in_india
+from Covid_cases_in_India
+
+---Q8.Show the top 5 states with the highest recovery rates (total cured cases / total confirmed cases) 
+---in descending order.
+
+select name_of_state, 
+(Cured / total_confirmed_cases) as recovery_rate
+from Covid_cases_in_India
+order by recovery_rate
+
+---Avg active case in india
+
+select Avg(active) from Covid_cases_in_India
+
+---Q9.the states with an active case count greater than 
+--- the average active case count across all states.
+
+
+select name_of_state, active
+from Covid_cases_in_India
+where active > ( select avg(active) from Covid_cases_in_India) 
+
+
+---Q10.the total number of cases (confirmed, active, cured, and deaths) 
+--- for each state, and sort the results in descending order by the total number of cases.
+
+select name_of_state,
+(total_confirmed_cases + active + cured + deaths) as total_cases
+from Covid_cases_in_India
+order by total_cases desc
+
+---Q11.Calculate the total number of confirmed cases, active cases, cured cases, and deaths for each state,
+---and show only the states where the total number of cases is greater than 50,000.
+
+select name_of_state, total_confirmed_cases, active, cured, deaths
+from Covid_cases_in_India
+where (total_confirmed_cases + active + cured + deaths) > 10000
+
+
+
